@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="components/header/tip.js"></script>
+    <script src="components/header/header.js"></script>
+    <script src="components/header/cream.js"></script>
+    <script src="components/header/share.js"></script>
+    <script src="components/header/ask.js"></script>
+    <script src="components/header/jquery-1.8.3.min.js"></script>
+    <script src="components_y/top-left.js"></script>
+    <link rel="stylesheet" href="css.css">
+    <script src="components_y/center-left.js"></script>
+    <script src="components_y/bottom-left.js"></script>
+    <script src="components_y/top-right.js"></script>
+    <script src="components_y/center-right.js"></script>
+    <script src="components_y/center-2-right.js"></script>
+    <script src="components_y/bottom-right.js"></script>
+    <link rel="stylesheet" href="CSSS.css">
+    <script src="components_yym/top-left.js"></script>
+    <script src="components_yym/bottom-left.js"></script>
+    <script src="components_yym/center-right.js"></script>
+    <script src="components_yym/top-right.js"></script>
+    <script src="components_yym/center-2-right.js"></script>
+    <script src="components_yym/bottom-right.js"></script>
+</head>
+<body>
+    <div class="wrap_m">
+        <div class="header_m">
+            <div class="h_left_m">
+                <img src="components/header/img/cnode.png" alt="">
+                <input type="text" class="search_m">
+            </div>
+            <div class="h_right_m">
+                <a href="">首页</a>
+                <a href="">新手入门</a>
+                <a href="">API</a>
+                <a href="">关于</a>
+                <a href="">注册</a>
+                <a href="">登录</a>
+            </div>
+        </div>
+    </div>
+    <div id="app_mx">
+        <div id="app_m" v-if="app_m">
+            <tip :tip="tip" :tip_index="tip_index" :tip_2="tip_2" :tip_="tip_" @tip-index-bgc="tip_click" :tip_click="tip_click"></tip>
+            <component v-bind:is="isComponent" :content="content" :tip="tip" :tip_index="tip_index" :tip_2="tip_2" :tip_="tip_" @title-index-bgc="title_click"
+                       :title_click="title_click" @top-right-bgc="top_click" :top_click="top_click"></component>
+        </div>
+        <div id="app" v-if="app_y" style="overflow: hidden">
+            <div style="float: left;width: 74%;min-width: 600px">
+                <top-left v-bind:json="json" @top-right-bgc="top_click" :top_click="top_click"></top-left>
+                <bottom-left v-bind:json="json"></bottom-left>
+            </div>
+            <div style="float: right;width: 25%;min-width:200px">
+                <top-right v-bind:json_3="json_3" @top-right-bgc="top_click" :top_click="top_click"></top-right>
+                <center-right v-bind:json="json"></center-right>
+                <center-2-right v-bind:json="json"></center-2-right>
+                <bottom-right v-bind:json="json"></bottom-right>
+            </div>
+        </div>
+        <div id="app_y" v-if="app_yym" style="overflow: hidden;min-width: 850px">
+            <div style="float: left;width: 74%;min-width: 600px">
+                <top-left-y v-bind:json_3="json_3" @top-left-bgc="top_left_click" :top_left_click="top_left_click"></top-left-y>
+                <center-left-y v-bind:json_3="json_3"></center-left-y>
+                <bottom-left-y v-bind:json_3="json_3"></bottom-left-y>
+            </div>
+            <div style="float: right;width: 25%;min-width: 200px">
+                <top-right-y v-bind:json_3="json_3"></top-right-y>
+                <center-right-y v-bind:json_3="json_3"></center-right-y>
+                <center-2-right-y v-bind:json_3="json_3"></center-2-right-y>
+                <bottom-right-y v-bind:json_3="json_3"></bottom-right-y>
+            </div>
+        </div>
+    </div>
+    <div class="bottom_m">
+        <p>
+            <span>RSS</span>
+            <span>|</span>
+            <span>源码地址</span>
+        </p>
+        <p>CNode 社区为国内最专业的 Node.js 开源技术社区，致力于 Node.js 的技术研究。</p>
+        <p>
+            <span>服务器赞助商为</span>
+            <img src="components/header/img/nav-logo.png"/>
+            <span> ，存储赞助商为</span>
+            <img src="components/header/img/七牛云.png"/>
+            <span>，由</span>
+            <img src="components/header/img/alibaba.png"/>
+            <span> 提供应用性能服务。</span>
+        </p>
+        <p>
+            <span>新手搭建 Node.js 服务器，推荐使用无需备案的</span>
+            <a href="#">DigitalOcean(https://www.digitalocean.com/)</a>
+        </p>
+    </div>
+    <script>
+        let vm = new Vue({
+            el:'#app_mx',
+            data:{
+                content:{},
+                app_m:true,
+                app_y:false,
+                app_yym:false,
+                tip_:true,
+                tip_2:true,
+                tip_index:0,
+                title_index:0,
+                json:{},
+                json_3:{},
+                tip:['全部','精华','分享','问答','招聘','客户端测试'],
+                isComponent:'a-list'
+            },
+            created(){
+                $.ajax({
+                    type:'get', //  请求方式get post，默认是get，
+                    url:'https://cnodejs.org/api/v1/topics?page=1&limit=40',//  请求地址
+                    // 设置为false说白了就是在url后面添加一个随机的吗时间戳
+                    //  保证浏览器不从本身的缓存抓取去重新请求服务器
+                    cache:false,
+                    //  jsonp 处理
+                    dataType:'json',
+                    //  请求假死,超时时间管理
+                    timeout:3000,
+                    // 响应完毕后，回调函数
+                    //  一般就一个data 储存echo 回来的数据
+                    success:(data)=>{
+                        this.content = data;
+                        console.log(data);
+                    }
+                });
+                $.ajax({
+                    url:'https://cnodejs.org/api/v1/topic/5b223c1d5cd02be640901490?mdrender=true\n',
+                    cache:false,
+                    timeout:3000,
+                    success: (data)=> {
+                        this.json = data;
+                        console.log(this.json)
+                    }
+                });
+                $.ajax({
+                    url:'https://cnodejs.org/api/v1/user/XadillaX',
+                    cache:false,
+                    timeout:3000,
+                    success: (data)=> {
+                        this.json_3 = data;
+                        console.log(this.json_3)
+
+                    }
+                });
+                let link_m = document.createElement('link');
+                link_m.rel = 'stylesheet';
+                link_m.type = 'text/css';
+                link_m.href ='./style_m.css' ;
+                document.getElementsByTagName('head')[0].appendChild(link_m);
+            },
+            methods:{
+                tip_click(data){
+                    this.tip_index = data;
+                    console.log(data);
+                    if(this.tip_index == 0){
+                        this.isComponent = 'a-list';
+                    }else if(this.tip_index == 1){
+                        this.isComponent = 'cream';
+                    }else if(this.tip_index == 2){
+                        this.isComponent = 'share';
+                    }else if(this.tip_index == 3){
+                        this.isComponent = 'ask';
+                    }
+                },
+                title_click(){
+                    this.app_m = false;
+                    this.app_y = true;
+                    this.app_yym = false;
+                },
+                top_click(){
+                    this.app_m = false;
+                    this.app_y = false;
+                    this.app_yym = true;
+                },
+                top_left_click(){
+                    this.app_m = true;
+                    this.app_y = false;
+                    this.app_yym = false;
+                }
+            }
+        })
+    </script>
+</body>
+</html>
